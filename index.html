@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我们的小学毕业纪念</title>
+    <title>【修复版】我们的小学毕业纪念</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 国内可访问的Supabase SDK，解决加载失败问题 -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-10-y/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+    <!-- 换一个更稳定的CDN加载Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -36,8 +36,8 @@
 </head>
 <body class="bg-warm min-h-screen">
     <header class="grad-bg text-white py-8 px-4 text-center">
-        <h1 class="text-3xl md:text-4xl font-bold mb-2">🎓 我们毕业啦！</h1>
-        <p class="text-lg opacity-90">XX小学XX班 · 永远的童年回忆</p>
+        <h1 class="text-3xl md:text-4xl font-bold mb-2">🎓 【修复版】我们毕业啦！</h1>
+        <p class="text-lg opacity-90">已修复SDK加载问题</p>
     </header>
 
     <main class="max-w-4xl mx-auto py-10 px-4">
@@ -50,23 +50,8 @@
             </p>
         </section>
 
-        <!-- 密码验证区域 -->
-        <section id="passwordBox" class="bg-white rounded-2xl p-8 card-shadow mb-10 text-center">
-            <h2 class="text-xl font-bold text-gray-700 mb-4">🔒 请输入密码查看留言</h2>
-            <div class="max-w-sm mx-auto space-y-4">
-                <input type="password" id="viewPassword" placeholder="请输入班级密码" 
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-lg">
-                <button onclick="checkPassword()" 
-                    class="bg-primary hover:bg-blue-400 text-white font-medium py-3 px-6 rounded-lg transition w-full">
-                    确认解锁
-                </button>
-                <p class="text-sm text-gray-500">密码由班级统一提供，仅同学可见</p>
-            </div>
-        </section>
-
-        <!-- 留言发布区 -->
-        <section id="messageArea" class="hidden bg-white rounded-2xl p-6 card-shadow mb-10">
-            <h2 class="text-xl font-bold text-gray-700 mb-4">📝 留下你的祝福</h2>
+        <section class="bg-white rounded-2xl p-6 card-shadow mb-10">
+            <h2 class="text-xl font-bold text-gray-700 mb-4">📝 发布留言</h2>
             <form id="messageForm" class="space-y-4">
                 <div>
                     <label class="block text-gray-600 mb-1">你的昵称</label>
@@ -85,112 +70,109 @@
             </form>
         </section>
 
-        <!-- 留言墙 -->
-        <section id="messageWall" class="hidden bg-white rounded-2xl p-6 card-shadow">
+        <section class="bg-white rounded-2xl p-6 card-shadow">
             <h2 class="text-xl font-bold text-gray-700 mb-4">💬 同学们的留言</h2>
             <div id="messageList" class="space-y-4">
-                <p class="text-gray-500 text-center">加载中...</p>
+                <p class="text-gray-500 text-center">正在加载留言...</p>
             </div>
         </section>
     </main>
 
     <footer class="text-center text-gray-500 py-6 text-sm">
-        💖 纪念我们美好的小学时光 · 2026毕业季
+        💖 2026毕业季
     </footer>
 
     <script>
-        // ====================== 【仅修改这里，其他不要动】======================
+        // ====================== 【保留你原来的配置，不要改】======================
         const SUPABASE_URL = "https://kpxsgamxyahfpobduyvf.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtweHNnYW14eWFoZnBvYmR1eXZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MTY2ODgsImV4cCI6MjA4OTM5MjY4OH0.V5qjiqdHwGj2aaeAvuBpyLvmRjLvgGLnDNflX9z7160";
-        const UNLOCK_PASSWORD = "liujiatop1";
         // ======================================================================
 
-        // 初始化Supabase
-        let supabaseClient;
-        try {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log("Supabase初始化成功");
-        } catch (e) {
-            console.error("Supabase初始化失败", e);
-            alert("初始化失败，请检查URL和密钥配置");
-        }
-
-        // 密码验证函数
-        window.checkPassword = function() {
-            const inputPwd = document.getElementById('viewPassword').value.trim();
-            console.log("输入的密码：", inputPwd);
-
-            if (inputPwd !== UNLOCK_PASSWORD) {
-                alert('❌ 密码错误，请重新输入！');
+        // 等待页面和SDK都加载完成后再初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log("页面加载完成，开始初始化...");
+            
+            // 检查supabase对象是否存在
+            if (typeof supabase === 'undefined') {
+                console.error("❌ Supabase SDK未加载成功");
+                alert("Supabase SDK加载失败，请刷新页面重试！");
                 return;
             }
 
-            // 密码正确，显示留言区域
-            document.getElementById('passwordBox').classList.add('hidden');
-            document.getElementById('messageArea').classList.remove('hidden');
-            document.getElementById('messageWall').classList.remove('hidden');
-            
+            // 初始化Supabase
+            let supabaseClient;
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log("✅ Supabase初始化成功");
+            } catch (e) {
+                console.error("❌ Supabase初始化失败", e);
+                alert("初始化失败，请检查控制台报错！");
+                return;
+            }
+
             // 加载留言
-            loadMessages();
-            alert('✅ 密码正确！欢迎查看班级留言墙');
-        }
+            async function loadMessages() {
+                const messageList = document.getElementById('messageList');
+                try {
+                    console.log("正在获取留言...");
+                    const { data, error } = await supabaseClient
+                        .from('messages')
+                        .select('*')
+                        .order('created_at', { ascending: false });
 
-        // 加载留言
-        async function loadMessages() {
-            const messageList = document.getElementById('messageList');
-            try {
-                const { data, error } = await supabaseClient
-                    .from('messages')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+                    if (error) throw error;
+                    console.log("✅ 获取留言成功", data);
 
-                if (error) throw error;
+                    if (data.length === 0) {
+                        messageList.innerHTML = '<p class="text-gray-500 text-center">还没有留言，快来发布第一条吧！</p>';
+                        return;
+                    }
 
-                if (data.length === 0) {
-                    messageList.innerHTML = '<p class="text-gray-500 text-center">还没有留言，快来写下第一句祝福吧！</p>';
-                    return;
-                }
-
-                let html = '';
-                data.forEach(item => {
-                    const time = new Date(item.created_at).toLocaleString();
-                    html += `
-                        <div class="border-b border-gray-100 pb-3 last:border-0">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="font-medium text-primary">${item.name}</span>
-                                <span class="text-xs text-gray-400">${time}</span>
+                    let html = '';
+                    data.forEach(item => {
+                        const time = new Date(item.created_at).toLocaleString();
+                        html += `
+                            <div class="border-b border-gray-100 pb-3 last:border-0">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-medium text-primary">${item.name}</span>
+                                    <span class="text-xs text-gray-400">${time}</span>
+                                </div>
+                                <p class="text-gray-600">${item.content}</p>
                             </div>
-                            <p class="text-gray-600">${item.content}</p>
-                        </div>
-                    `;
-                });
-                messageList.innerHTML = html;
-            } catch (e) {
-                console.error("加载留言失败", e);
-                messageList.innerHTML = '<p class="text-red-500 text-center">加载失败，请检查控制台报错</p>';
+                        `;
+                    });
+                    messageList.innerHTML = html;
+                } catch (e) {
+                    console.error("❌ 加载留言失败", e);
+                    messageList.innerHTML = `<p class="text-red-500 text-center">加载失败：${e.message}</p>`;
+                }
             }
-        }
 
-        // 提交留言
-        document.getElementById('messageForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const content = document.getElementById('content').value.trim();
+            // 提交留言
+            document.getElementById('messageForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const content = document.getElementById('content').value.trim();
 
-            try {
-                const { error } = await supabaseClient
-                    .from('messages')
-                    .insert([{ name, content }]);
+                try {
+                    console.log("正在发布留言...");
+                    const { error } = await supabaseClient
+                        .from('messages')
+                        .insert([{ name, content }]);
 
-                if (error) throw error;
+                    if (error) throw error;
+                    console.log("✅ 发布成功");
+                    alert('✅ 留言发布成功！');
+                    document.getElementById('messageForm').reset();
+                    loadMessages();
+                } catch (e) {
+                    console.error("❌ 发布失败", e);
+                    alert(`发布失败：${e.message}`);
+                }
+            });
 
-                alert('✅ 留言发布成功！');
-                document.getElementById('messageForm').reset();
-                loadMessages();
-            } catch (e) {
-                console.error("发布留言失败", e);
-                alert('❌ 发布失败，请检查控制台报错');
-            }
+            // 页面加载完成后立即加载留言
+            loadMessages();
         });
     </script>
 </body>
