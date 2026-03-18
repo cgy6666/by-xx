@@ -4,19 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我们的小学毕业纪念</title>
-    <!-- 美化样式：Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- 自定义配置 -->
+    <!-- 国内可访问的Supabase SDK，解决加载失败问题 -->
+    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-10-y/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#87CEEB', // 天空蓝
-                        secondary: '#FFB6C1', // 浅粉
-                        warm: '#FFF8DC', // 暖白
+                        primary: '#87CEEB',
+                        secondary: '#FFB6C1',
+                        warm: '#FFF8DC',
                     },
                     fontFamily: {
                         sans: ['Microsoft YaHei', 'sans-serif'],
@@ -37,15 +35,12 @@
     </style>
 </head>
 <body class="bg-warm min-h-screen">
-    <!-- 顶部标题栏 -->
     <header class="grad-bg text-white py-8 px-4 text-center">
         <h1 class="text-3xl md:text-4xl font-bold mb-2">🎓 我们毕业啦！</h1>
-        <p class="text-lg opacity-90">五一中路小学六甲班 · 永远的童年回忆</p>
+        <p class="text-lg opacity-90">XX小学XX班 · 永远的童年回忆</p>
     </header>
 
-    <!-- 主体内容 -->
     <main class="max-w-4xl mx-auto py-10 px-4">
-        <!-- 毕业寄语 -->
         <section class="bg-white rounded-2xl p-6 card-shadow mb-10">
             <h2 class="text-xl font-bold text-gray-700 mb-3">✨ 毕业寄语</h2>
             <p class="text-gray-600 leading-7">
@@ -55,7 +50,7 @@
             </p>
         </section>
 
-        <!-- 🔒 密码验证区域 -->
+        <!-- 密码验证区域 -->
         <section id="passwordBox" class="bg-white rounded-2xl p-8 card-shadow mb-10 text-center">
             <h2 class="text-xl font-bold text-gray-700 mb-4">🔒 请输入密码查看留言</h2>
             <div class="max-w-sm mx-auto space-y-4">
@@ -69,7 +64,7 @@
             </div>
         </section>
 
-        <!-- 📝 留言发布区 -->
+        <!-- 留言发布区 -->
         <section id="messageArea" class="hidden bg-white rounded-2xl p-6 card-shadow mb-10">
             <h2 class="text-xl font-bold text-gray-700 mb-4">📝 留下你的祝福</h2>
             <form id="messageForm" class="space-y-4">
@@ -90,7 +85,7 @@
             </form>
         </section>
 
-        <!-- 💬 留言墙 -->
+        <!-- 留言墙 -->
         <section id="messageWall" class="hidden bg-white rounded-2xl p-6 card-shadow">
             <h2 class="text-xl font-bold text-gray-700 mb-4">💬 同学们的留言</h2>
             <div id="messageList" class="space-y-4">
@@ -99,41 +94,52 @@
         </section>
     </main>
 
-    <!-- 底部 -->
     <footer class="text-center text-gray-500 py-6 text-sm">
         💖 纪念我们美好的小学时光 · 2026毕业季
     </footer>
 
-    <!-- 核心功能JS -->
     <script>
-        // ====================== 【必须修改】配置区 ======================
+        // ====================== 【仅修改这里，其他不要动】======================
         const SUPABASE_URL = "https://kpxsgamxyahfpobduyvf.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtweHNnYW14eWFoZnBvYmR1eXZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MTY2ODgsImV4cCI6MjA4OTM5MjY4OH0.V5qjiqdHwGj2aaeAvuBpyLvmRjLvgGLnDNflX9z7160";
-        const UNLOCK_PASSWORD = "liujiabantop1"; // 自定义解锁密码
-        // ==============================================================
+        const UNLOCK_PASSWORD = "liujiatop1";
+        // ======================================================================
 
         // 初始化Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabaseClient;
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log("Supabase初始化成功");
+        } catch (e) {
+            console.error("Supabase初始化失败", e);
+            alert("初始化失败，请检查URL和密钥配置");
+        }
 
-        // 🔑 密码验证
-        function checkPassword() {
+        // 密码验证函数
+        window.checkPassword = function() {
             const inputPwd = document.getElementById('viewPassword').value.trim();
-            if (inputPwd === UNLOCK_PASSWORD) {
-                document.getElementById('passwordBox').classList.add('hidden');
-                document.getElementById('messageArea').classList.remove('hidden');
-                document.getElementById('messageWall').classList.remove('hidden');
-                loadMessages();
-                alert('✅ 密码正确！欢迎查看班级留言墙');
-            } else {
+            console.log("输入的密码：", inputPwd);
+
+            if (inputPwd !== UNLOCK_PASSWORD) {
                 alert('❌ 密码错误，请重新输入！');
+                return;
             }
+
+            // 密码正确，显示留言区域
+            document.getElementById('passwordBox').classList.add('hidden');
+            document.getElementById('messageArea').classList.remove('hidden');
+            document.getElementById('messageWall').classList.remove('hidden');
+            
+            // 加载留言
+            loadMessages();
+            alert('✅ 密码正确！欢迎查看班级留言墙');
         }
 
         // 加载留言
         async function loadMessages() {
             const messageList = document.getElementById('messageList');
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('messages')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -160,7 +166,8 @@
                 });
                 messageList.innerHTML = html;
             } catch (e) {
-                messageList.innerHTML = '<p class="text-red-500 text-center">加载失败，请检查网络</p>';
+                console.error("加载留言失败", e);
+                messageList.innerHTML = '<p class="text-red-500 text-center">加载失败，请检查控制台报错</p>';
             }
         }
 
@@ -171,7 +178,7 @@
             const content = document.getElementById('content').value.trim();
 
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('messages')
                     .insert([{ name, content }]);
 
@@ -181,7 +188,8 @@
                 document.getElementById('messageForm').reset();
                 loadMessages();
             } catch (e) {
-                alert('❌ 发布失败，请重试');
+                console.error("发布留言失败", e);
+                alert('❌ 发布失败，请检查控制台报错');
             }
         });
     </script>
