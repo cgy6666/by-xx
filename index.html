@@ -96,8 +96,32 @@
         </section>
     </main>
 
-    <footer class="text-center text-gray-500 py-6 text-sm">
-        💖 纪念我们美好的小学时光 · 2026毕业季
+    <footer class="text-center text-gray-500 py-8 text-sm">
+        <div class="flex flex-col items-center space-y-3">
+            <!-- 第一行：毕业纪念文字 -->
+            <p>💖 纪念我们美好的小学时光 · 2026毕业季</p>
+            
+            <!-- 第二行：作者名称 + 洛谷链接 -->
+            <div class="flex items-center space-x-2">
+                <span>开发者：</span>
+                <!-- 洛谷图片链接 -->
+                <a 
+                    href="https://www.luogu.com.cn/user/1048914" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    class="flex items-center space-x-1 hover:text-primary transition"
+                >
+                    <!-- 洛谷Logo图片 -->
+                    <img 
+                        src="https://cdn.luogu.com.cn/upload/usericon/1048914.png" 
+                        alt="头像" 
+                        class="w-7 h-7 rounded-full inline-block align-middle"
+                    >
+                    <!-- 你的洛谷ID/作者名称 -->
+                    <span class="font-medium">陈恭宇</span>
+                </a>
+            </div>
+        </div>
     </footer>
 
     <script>
